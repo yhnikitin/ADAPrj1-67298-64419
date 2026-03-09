@@ -8,41 +8,73 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-        int P = Integer.parseInt(in.readLine().trim());
-        int R = Integer.parseInt(in.readLine().trim());
+        int TestCases = Integer.parseInt(in.readLine().trim());
 
-        int[] min = new int[R];
-        int[] max = new int[R];
 
-        for (int i = 0; i < R; i++) {
-            String[] parts = in.readLine().split(" ");
-            int x = Integer.parseInt(parts[1]);
+        for (int i = 0; i < TestCases; i++) {
+            int numOfOffers = Integer.parseInt(in.readLine().trim());
 
-            if (parts[0].equals("MIN")) {
-                min[i] = x;
-                max[i] = P;
-            } else {
-                min[i] = 0;
-                max[i] = x;
+            Record[] characteristics = new Record[numOfOffers];
+
+            for(int j=0;j<numOfOffers;j++){
+                String offer = (in.readLine().trim());
+                String[] parts = offer.split(" ");
+                int startTime = Integer.parseInt(parts[0]);
+                int duration = Integer.parseInt(parts[1]);
+                int price = Integer.parseInt(parts[2]);
+
+                Record rec = new Record(startTime, duration, price);
+
+                characteristics[j] = rec;
             }
+            Arrays.sort(characteristics);
+            System.out.println(dynamicProg(characteristics, numOfOffers));
         }
 
-        long[][] dp = new long[R + 1][P + 1];
-        dp[0][0] = 1;
+    }
 
-        for (int r = 1; r <= R; r++) {
-            for (int p = 0; p <= P; p++) {
-                if (dp[r - 1][p] == 0) continue;
 
-                for (int k = min[r - 1]; k <= max[r - 1]; k++) {
-                    if (p + k <= P) {
-                        dp[r][p + k] += dp[r - 1][p];
-                    }
-                }
+    private static int dynamicProg(Record[] characteristics, int numOfOffers) {
+        int[] max = new int[numOfOffers];
+        max[0] = characteristics[0].price;
+        for(int j=1;j<numOfOffers;j++){
+            Record rec = characteristics[j];
+            max[j] = Math.max(max[j-1], rec.price + search(characteristics, max, j));
+        }
+        Arrays.sort(max);
+        return max[numOfOffers-1];
+    }
+
+    private static int search(Record[] characteristics, int[] max,  int j) {
+        Record rec = characteristics[j];
+        for (int i=j-1;i>=0;i--){
+            Record rec2 = characteristics[i];
+            if(rec2.endTime<=rec.startTime){
+                return max[i];
             }
         }
+        return 0;
+    }
 
-        System.out.println(dp[R][P]);
+    public static class Record implements Comparable {
+        int startTime;
+        int duration;
+        int price;
+        int endTime;
+        public Record(int startTime, int duration, int price) {
+            this.startTime = startTime;
+            this.duration = duration;
+            this.price = price;
+            this.endTime = startTime + duration;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if(o instanceof Record){
+                return this.endTime - ((Record)o).endTime;
+            }
+            else return 0;
+        }
     }
 }
 
