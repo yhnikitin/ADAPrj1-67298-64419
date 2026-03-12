@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.nio.Buffer;
-import java.util.*;
-
+import java.io.*;
 
 public class Main {
 /* 
@@ -15,7 +12,7 @@ public class Main {
  * "." -> Tile with no constraints
  * "X" -> Tile with no diagonal jumps (LD RD)
  * "J" ->Tile with no jumps
- * "X" -> Tile that cannot be stepped on 
+ * "#" -> Tile that cannot be stepped on 
  * 
  * ---Hints---
  * Not supposed to store all the grids, just solve directly 1 by 1 and print out the result.
@@ -46,8 +43,9 @@ public class Main {
         }
       }
       //Create a solver instance and get the result
-      Solver solver = new Solver(R, C, M , N, grid);
-      System.out.println(solver.getResult());
+      Solver solver = new SolverClass(R, C, M , N, grid);
+      int result = solver.solve();
+      System.out.println(result);
     }
   }
 }
