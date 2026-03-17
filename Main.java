@@ -43,7 +43,7 @@ public class Main {
         }
       }
       //Create a solver instance and get the result
-      Solver solver = new SolverClass(R, C, M , N, grid);
+      ProgramInterface solver = new Program(R, C, M , N, grid);
       int result = solver.solve();
       System.out.println(result);
     }
